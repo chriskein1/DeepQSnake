@@ -1,0 +1,24 @@
+.square {
+    display: flex;
+    width: 100px;
+    height: 100px;
+    color: #000000;
+}
+
+.grid {
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 2000px;
+    height: 800px;
+    background-color: #3498db;
+}
+
+.white {
+    background-color: #ffffff;
+}
+
+.black {
+    background-color: #000000;
+}
