@@ -51,7 +51,10 @@ export default class Snake {
     }
 
     setDir(dir) {
-        this.dir = dir;
+        // Disallow the Snake from moving in the opposite direction
+        if (!arrayCompare([-this.officialDir[0], -this.officialDir[1]], dir)) {
+            this.dir = dir;
+        }
     }
 
     /* 
