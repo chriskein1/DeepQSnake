@@ -1,8 +1,9 @@
+import Apple from './Apple.mjs';
 import { directions, arrayCompare } from './Directions.mjs';
 export default class Snake {
     constructor(width, height, canvas) {
         // Head is last element of list
-        this.frequency = 1000;
+        this.frequency = 250;
         this.canvas = canvas;
         this.w = width;
         this.h = height
@@ -13,6 +14,7 @@ export default class Snake {
         this.render();
         this.start = undefined;
         this.current = undefined;
+        this.apple = new Apple(this.w, this.h, this.canvas, this.body);
         window.requestAnimationFrame(this.step);
     }
 
@@ -27,12 +29,25 @@ export default class Snake {
                 this.current = Math.floor(elapsed / this.frequency);
                 this.officialDir = this.dir;
                 this.body.push([this.body[this.body.length - 1][0] + this.officialDir[0], this.body[this.body.length - 1][1] + this.officialDir[1]]);
-                this.tail = this.body.shift();
+                this.appleEaten = arrayCompare(this.body[this.body.length - 1], this.apple.pos);
+                if (this.appleEaten) {
+                    this.apple.spawn(this.body);
+                    // Define tail
+                } else {
+                    this.tail = this.body.shift();
+                }
+                this.lost = this.gameOver();
             }
-            this.grow(elapsed);
-            this.shrink(elapsed);
+            if (!this.lost) {
+                this.grow(elapsed);
+                if (!this.appleEaten) {
+                    this.shrink(elapsed);
+                }
+                window.requestAnimationFrame(this.step);
+            } else {
+                window.location.reload();
+            }
         }
-        window.requestAnimationFrame(this.step);
     }
 
     setDir(dir) {
@@ -49,12 +64,13 @@ export default class Snake {
             return;
         }
         let ctx = this.canvas.getContext("2d");
+        ctx.fillStyle = "#3BB143";
         let headX = this.body[this.body.length - 1][0] * this.squareSize;
         let headY = this.body[this.body.length - 1][1] * this.squareSize;
         ctx.clearRect(headX, headY, this.squareSize, this.squareSize);
         // Set size of rectangle
         let d = this.squareSize * (elapsed % this.frequency) / this.frequency;
-        if (d / this.squareSize > .97) d = this.squareSize;
+        if (d / this.squareSize > .90) d = this.squareSize;
         // Set direction, and draw rectangle to be moving in the correct direction
         if (arrayCompare(this.officialDir, directions["down"])) {
             ctx.fillRect(headX, headY, this.squareSize, d);
@@ -81,7 +97,7 @@ export default class Snake {
         let tailX = this.tail[0] * this.squareSize;
         let tailY = this.tail[1] * this.squareSize;
         let d = this.squareSize * (elapsed % this.frequency) / this.frequency;
-        if (d / this.squareSize > .97) d = this.squareSize;
+        if (d / this.squareSize > .90) d = this.squareSize;
         let tailDir = this.getTailDir();
         if (arrayCompare(tailDir, directions["down"])) {
             ctx.clearRect(tailX, tailY, this.squareSize, d);
@@ -101,15 +117,34 @@ export default class Snake {
         }
     }
 
+    // getTailDir() function called by shrink() to determine the movement direction of the tail
     getTailDir() {
-        let tail = this.tail;
         let next = this.body[0];
-        return [next[0] - tail[0], next[1] - tail[1]];
+        return [next[0] - this.tail[0], next[1] - this.tail[1]];
     }
 
-    eat(pos) {
-        // call once per big time step
-        // Logic to eat food (like update, but don't shrink tail)
+    // Determine if the Snake has died
+    // Death is determined by going out of bounds or having the Snake's head run into its body
+    gameOver() {
+        // Get head of Snake
+        let head = this.body[this.body.length - 1];
+        // Get coordinates of head
+        let x = head[0];
+        let y = head[1];
+        // Check if head is out of bounds
+        if (x < 0 || x >= this.w || y < 0 || y >= this.h) {
+            return true;
+        }
+        if (arrayCompare(head, this.tail)) {
+            return true;
+        }
+        // Check if head is in body
+        for (let element of this.body.slice(0, this.body.length - 1)) {
+            if (arrayCompare(element, head)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Render the Snake

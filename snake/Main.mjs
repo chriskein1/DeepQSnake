@@ -39,23 +39,6 @@ window.addEventListener("keydown", (e) => {
     }
 });
 
-
-// New game
-// let game = new Game(10, 10, canvas.width, canvas.height);
-// window.addEventListener("keydown", (e) => {
-//     console.log(e.key);
-//     if (e.key == "ArrowUp") {
-//         game.snake.setDir([0, -1]);
-//     } else if (e.key == "ArrowDown") {
-//         game.snake.setDir([0, 1]);
-//     } else if (e.key == "ArrowLeft") {
-//         game.snake.setDir([-1, 0]);
-//     } else if (e.key == "ArrowRight") {
-//         game.snake.setDir([1, 0]);
-//     }
-// });
-// //TODO: Render Snake
-
 // // Play Game
 
 // // int main(int argc, char **argv[]) {
