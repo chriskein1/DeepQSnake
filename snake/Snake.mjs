@@ -1,3 +1,4 @@
+import { directions, arrayCompare } from './Directions.mjs';
 export default class Snake {
     constructor(width, height, canvas) {
         // Head is last element of list
@@ -15,47 +16,21 @@ export default class Snake {
         window.requestAnimationFrame(this.step);
     }
 
-    step = (timeStamp) => {
+    step = (timeStep) => {
         if (this.dir[0] !== 0 || this.dir[1] !== 0) {
             if (this.start === undefined) {
-                this.start = timeStamp;
+                this.start = timeStep;
                 this.current = 0;
             }
-            const elapsed = timeStamp - this.start;
+            const elapsed = timeStep - this.start;
             if (Math.floor(elapsed / this.frequency) > this.current) {
                 this.current = Math.floor(elapsed / this.frequency);
                 this.officialDir = this.dir;
                 this.body.push([this.body[this.body.length - 1][0] + this.officialDir[0], this.body[this.body.length - 1][1] + this.officialDir[1]]);
+                this.tail = this.body.shift();
             }
-            if (this.officialDir[0] !== 0 || this.officialDir[1] !== 0) {
-                let ctx = this.canvas.getContext("2d");
-                let headX = this.body[this.body.length - 1][0] * this.squareSize;
-                let headY = this.body[this.body.length - 1][1] * this.squareSize;
-                ctx.clearRect(headX, headY, this.squareSize, this.squareSize);
-                // ctx.fillRect(headX, headY, this.squareSize, this.squareSize * (elapsed % this.frequency) / this.frequency);
-                // Going down
-                if (this.officialDir[0] === 0 && this.officialDir[1] === 1) {
-                    console.log("Down");
-                    ctx.fillRect(headX, headY, this.squareSize, this.squareSize * (elapsed * this.frequency) / this.frequency);
-                }
-                // Going up
-                else if (this.officialDir[0] === 0 && this.officialDir[1] === -1) {
-                    console.log("Up");
-                    ctx.fillRect(headX, headY - this.squareSize * elapsed / this.max, this.squareSize, this.squareSize * elapsed / this.max);
-                }
-                // Going right
-                else if (this.officialDir[0] === 1 && this.officialDir[1] === 0) {
-                    console.log("Right");
-                    ctx.fillRect(headX, headY, this.squareSize * elapsed / this.max, this.squareSize);
-                }
-                // Going left
-                else if (this.officialDir[0] === -1 && this.officialDir[1] === 0) {
-                    console.log("Left");
-                    ctx.fillRect(headX - this.squareSize * elapsed / this.max, headY, this.squareSize / elapsed, this.squareSize);
-                } else {
-                    console.log("Error");
-                }
-            }
+            this.grow(elapsed);
+            this.shrink(elapsed);
         }
         window.requestAnimationFrame(this.step);
     }
@@ -64,33 +39,72 @@ export default class Snake {
         this.dir = dir;
     }
 
-    update() {
-        // call once per big time step
-        this.grow(); // grow head
-        // this.shrink(); // shrink tail
+    /* 
+        grow() is called once per small time step. 
+        It grows the snake by a number of pixels to create smooth movement between tiles. 
+        It also updates the official direction of the Snake,
+    */
+    grow(elapsed) {
+        if (this.officialDir[0] === 0 && this.officialDir[1] === 0) {
+            return;
+        }
+        let ctx = this.canvas.getContext("2d");
+        let headX = this.body[this.body.length - 1][0] * this.squareSize;
+        let headY = this.body[this.body.length - 1][1] * this.squareSize;
+        ctx.clearRect(headX, headY, this.squareSize, this.squareSize);
+        // Set size of rectangle
+        let d = this.squareSize * (elapsed % this.frequency) / this.frequency;
+        if (d / this.squareSize > .97) d = this.squareSize;
+        // Set direction, and draw rectangle to be moving in the correct direction
+        if (arrayCompare(this.officialDir, directions["down"])) {
+            ctx.fillRect(headX, headY, this.squareSize, d);
+        }
+        else if (arrayCompare(this.officialDir, directions["up"])) {
+            ctx.fillRect(headX, headY + this.squareSize - d, this.squareSize, d);
+        }
+        else if (arrayCompare(this.officialDir, directions["right"])) {
+            ctx.fillRect(headX, headY, d, this.squareSize);
+        }
+        else if (arrayCompare(this.officialDir, directions["left"])) {
+            ctx.fillRect(headX + this.squareSize - d, headY, d, this.squareSize);
+        } else {
+            console.log("Error");
+        }
     }
 
-    grow() {
+    // logic to shrink tail
+    shrink(elapsed) {
+        if (this.officialDir[0] === 0 && this.officialDir[1] === 0) {
+            return;
+        }
+        let ctx = this.canvas.getContext("2d");
+        let tailX = this.tail[0] * this.squareSize;
+        let tailY = this.tail[1] * this.squareSize;
+        let d = this.squareSize * (elapsed % this.frequency) / this.frequency;
+        if (d / this.squareSize > .97) d = this.squareSize;
+        let tailDir = this.getTailDir();
+        if (arrayCompare(tailDir, directions["down"])) {
+            ctx.clearRect(tailX, tailY, this.squareSize, d);
+        }
+        else if (arrayCompare(tailDir, directions["up"])) {
+            ctx.clearRect(tailX, tailY + this.squareSize - d, this.squareSize, d);
+        }
+        else if (arrayCompare(tailDir, directions["right"])) {
+            ctx.clearRect(tailX, tailY, d, this.squareSize);
 
+        }
+        else if (arrayCompare(tailDir, directions["left"])) {
+            ctx.clearRect(tailX + this.squareSize - d, tailY, d, this.squareSize);
 
-        // Logic to grow head
-        // this.body.push({this.body[this.body.length - 1][0] + this.dir[0], this.body[this.body.length - 1][1] + this.dir[1]})
-        // paint new rect at head, assign to variable.
-        // int t = 0;
-
-        /* 
-            while t < refreshRate {
-                move new rect in this.dir this.direction
-                rect.translate(this.dir[0]/refreshRate, this.dir[1]/refreshRate)
-            }
-        */
-        // this.body.push(newR
-
-
+        } else {
+            console.log("Error");
+        }
     }
 
-    shrink() {
-        // logic to shrink tail
+    getTailDir() {
+        let tail = this.tail;
+        let next = this.body[0];
+        return [next[0] - tail[0], next[1] - tail[1]];
     }
 
     eat(pos) {
