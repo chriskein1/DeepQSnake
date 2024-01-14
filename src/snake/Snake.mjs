@@ -15,6 +15,7 @@ export default class Snake {
         this.start = undefined;
         this.current = undefined;
         this.apple = new Apple(this.w, this.h, this.canvas, this.body);
+        this.apple.spawn(this.body);
         window.requestAnimationFrame(this.step);
     }
 

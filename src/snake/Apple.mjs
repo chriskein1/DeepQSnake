@@ -20,6 +20,7 @@ export default class Apple {
             this.x = Math.floor(Math.random() * this.maxX);
             this.y = Math.floor(Math.random() * this.maxY);
         } while (this.inBody(body));
+        console.log(this.pos);
         this.render();
     }
 

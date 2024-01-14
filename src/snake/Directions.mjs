@@ -10,7 +10,7 @@ export const directions = {
 
 // Functions to improve array comparison readability
 export function arrayCompare(arr1, arr2) {
-    if (arr1[0] == arr2[0] && arr1[1] == arr2[1]) {
+    if (arr1[0] === arr2[0] && arr1[1] === arr2[1]) {
         return true;
     }
 }
