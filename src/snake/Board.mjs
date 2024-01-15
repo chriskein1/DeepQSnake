@@ -6,7 +6,6 @@ export default class Board {
         this.canvas = canvas
         // Create array
         this.board = this.instantiateBoard();
-        this.draw();
     }
 
     // Create board

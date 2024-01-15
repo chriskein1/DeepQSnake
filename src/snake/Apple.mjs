@@ -6,11 +6,7 @@ export default class Apple {
         this.maxX = width;
         this.maxY = height;
         this.squareSize = Math.floor(Math.min(this.canvas.width / this.maxX, this.canvas.height / this.maxY));
-        this.appleSprite = new Image();
-        this.appleSprite.src = './apple.png';
-        this.appleSprite.onload = () => {
-            this.spawn(body);
-        }
+        this.spawn(body);
     }
 
     get pos() { return [this.x, this.y]; };
@@ -33,8 +29,15 @@ export default class Apple {
     }
 
     render() {
-        let ctx = this.canvas.getContext("2d");
-        ctx.drawImage(this.appleSprite, this.x * this.squareSize, this.y * this.squareSize, this.squareSize, this.squareSize);
+        const img = new Image();
+        img.onerror = () => {
+            console.error("Error loading image :(");
+        };
+        img.onload = () => {
+            let ctx = this.canvas.getContext("2d");
+            ctx.drawImage(img, this.x * this.squareSize, this.y * this.squareSize, this.squareSize, this.squareSize);
+        };
+        img.src = "https://github.com/TrevorGarnett/snake_solver/blob/main/snake/apple.png?raw=true";
     }
 
 }
