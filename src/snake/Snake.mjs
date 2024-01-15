@@ -97,15 +97,19 @@ export default class Snake {
         // Set direction, and draw rectangle to be moving in the correct direction
         if (arrayCompare(this.officialDir, directions["down"])) {
             ctx.fillRect(headX + e, headY - e, this.squareSize - 2 * e, d + e);
+            this.drawEyes("down", d, ctx, headX, headY);
         }
         else if (arrayCompare(this.officialDir, directions["up"])) {
             ctx.fillRect(headX + e, headY + this.squareSize - d, this.squareSize - 2 * e, d + e);
+            this.drawEyes("up", d, ctx, headX, headY);
         }
         else if (arrayCompare(this.officialDir, directions["right"])) {
             ctx.fillRect(headX - e, headY + e, d + e, this.squareSize - 2 * e);
+            this.drawEyes("right", d, ctx, headX, headY);
         }
         else if (arrayCompare(this.officialDir, directions["left"])) {
             ctx.fillRect(headX + this.squareSize - d, headY + e, d + e, this.squareSize - 2 * e);
+            this.drawEyes("left", d, ctx, headX, headY);
         } else {
             console.log("Error");
         }
@@ -194,7 +198,154 @@ export default class Snake {
         let ctx = this.canvas.getContext("2d");
         let x = this.body[0][0] * this.squareSize;
         let y = this.body[0][1] * this.squareSize;
+        
         ctx.fillStyle = "#3BB143";
         ctx.fillRect(x, y + e, 2 * this.squareSize, this.squareSize - 2 * e);
+
+        // Render the Snake's eyes
+        let eyeX = x + 1.7 * this.squareSize
+        let eyeSize = 0.2 * this.squareSize;
+        ctx.fillStyle = "White";
+
+        // Snake's left eye
+        ctx.fillRect(eyeX, y + 0.2 * this.squareSize, eyeSize, eyeSize);
+
+        // Snake's right eye
+        ctx.fillRect(eyeX, y + 0.6 * this.squareSize, eyeSize, eyeSize);
+
+        // Render the Snake's pupils
+        let pupilSize = 0.1 * this.squareSize;
+        ctx.fillStyle = "Black";
+
+        // Snake's left pupil
+        let pupilX = eyeX + 0.1 * this.squareSize;
+        ctx.fillRect(pupilX, y + 0.25 * this.squareSize, pupilSize, pupilSize);
+
+        // Snake's right pupil
+        ctx.fillRect(pupilX, y + 0.65 * this.squareSize, pupilSize, pupilSize);
+
+    }
+
+    drawEyes(dir, d, ctx, headX, headY) {
+        // Snake moving to the right
+        if (dir === "right") {
+            // Render the Snake's eyes
+            let eyeX = headX + 1.7 * this.squareSize;
+            let eyeSize = 0.2 * this.squareSize;
+
+            // Paint green before eyes
+            ctx.fillStyle = "#3BB143";
+            ctx.fillRect(headX + d - 0.9 * this.squareSize, headY + 0.1 * this.squareSize, 0.8 * this.squareSize, 0.8 * this.squareSize);
+
+            // ctx.fillRect(headX + 0.1 * this.squareSize, headY + d - 0.9 * this.squareSize, 0.8 * this.squareSize, 0.8 * this.squareSize);
+
+
+            ctx.fillStyle = "White";
+
+            // Snake's left eye
+            ctx.fillRect(eyeX + d - this.squareSize * 2, headY + 0.2 * this.squareSize, eyeSize, eyeSize);
+    
+            // Snake's right eye
+            ctx.fillRect(eyeX + d - this.squareSize * 2, headY + 0.6 * this.squareSize, eyeSize, eyeSize);
+    
+            // Render the Snake's pupils
+            let pupilSize = 0.1 * this.squareSize;
+            ctx.fillStyle = "Black";
+    
+            // Snake's left pupil
+            let pupilX = eyeX + 0.1 * this.squareSize + d;
+            ctx.fillRect(pupilX - this.squareSize * 2, headY + 0.25 * this.squareSize, pupilSize, pupilSize);
+    
+            // Snake's right pupil
+            ctx.fillRect(pupilX - this.squareSize * 2, headY + 0.65 * this.squareSize, pupilSize, pupilSize);
+        }
+        // Snake moving left
+        else if (dir === "left") {
+
+            // Render the Snake's eyes
+            let eyeX = headX + 1.125 * this.squareSize;
+            let eyeSize = 0.2 * this.squareSize;
+
+            // Paint green before eyes
+            ctx.fillStyle = "#3BB143";
+            ctx.fillRect(eyeX - d, headY + 0.1 * this.squareSize, this.squareSize * 0.8, 0.8 * this.squareSize);
+
+            ctx.fillStyle = "White";
+
+            // Snake's left eye
+            ctx.fillRect(eyeX - d, headY + 0.2 * this.squareSize, eyeSize, eyeSize);
+
+            // Snake's right eye
+            ctx.fillRect(eyeX - d, headY + 0.6 * this.squareSize, eyeSize, eyeSize);
+
+            // Render the Snake's pupils
+            let pupilSize = 0.1 * this.squareSize;
+            ctx.fillStyle = "Black";
+
+            // Snake's left pupil
+            let pupilX = eyeX;
+            ctx.fillRect(pupilX - d, headY + 0.25 * this.squareSize, pupilSize, pupilSize);
+
+            // Snake's right pupil
+            ctx.fillRect(pupilX - d, headY + 0.65 * this.squareSize, pupilSize, pupilSize);
+        }
+        
+        // Snake moving down
+        else if (dir === "down") {
+            // Render the Snake's eyes
+            let eyeY = headY + 0.7 * this.squareSize;
+            let eyeSize = 0.2 * this.squareSize;
+
+            // Paint green before eyes
+            ctx.fillStyle = "#3BB143";
+            ctx.fillRect(headX + 0.1 * this.squareSize, headY + d - 0.9 * this.squareSize, 0.8 * this.squareSize, 0.8 * this.squareSize);
+
+            ctx.fillStyle = "White";
+
+            // Snake's left eye
+            ctx.fillRect(headX + 0.2 * this.squareSize, eyeY + d - this.squareSize, eyeSize, eyeSize);
+
+            // Snake's right eye
+            ctx.fillRect(headX + 0.6 * this.squareSize, eyeY + d - this.squareSize, eyeSize, eyeSize);
+
+            // Render the Snake's pupils
+            let pupilSize = 0.1 * this.squareSize;
+            ctx.fillStyle = "Black";
+
+            // Snake's left pupil
+            let pupilY = eyeY + 0.1 * this.squareSize;
+            ctx.fillRect(headX +  0.25 * this.squareSize, pupilY + d - this.squareSize, pupilSize, pupilSize);
+
+            // Snake's right pupil
+            ctx.fillRect(headX +  0.65 * this.squareSize, pupilY + d - this.squareSize, pupilSize, pupilSize);
+        }
+        // Snake moving up
+        else if (dir === "up") {
+            // Render the Snake's eyes
+            let eyeY = headY + 1.125 * this.squareSize;
+            let eyeSize = 0.2 * this.squareSize;
+
+            // Paint green before eyes
+            ctx.fillStyle = "#3BB143";
+            ctx.fillRect(headX + 0.1 * this.squareSize, eyeY - d, 0.8 * this.squareSize, 0.8 * this.squareSize);
+            ctx.fillStyle = "White";
+
+            // Snake's left eye
+            ctx.fillRect(headX + 0.2 * this.squareSize, eyeY - d, eyeSize, eyeSize);
+
+            // Snake's right eye
+            ctx.fillRect(headX + 0.6 * this.squareSize, eyeY - d, eyeSize, eyeSize);
+
+            // Render the Snake's pupils
+            let pupilSize = 0.1 * this.squareSize;
+            ctx.fillStyle = "Black";
+
+            // Snake's left pupil
+            let pupilY = eyeY;
+            ctx.fillRect(headX +  0.25 * this.squareSize, pupilY - d, pupilSize, pupilSize);
+
+            // Snake's right pupil
+            ctx.fillRect(headX +  0.65 * this.squareSize, pupilY - d, pupilSize, pupilSize);
+        }
     }
 }

@@ -37,7 +37,7 @@ export default class Apple {
             let ctx = this.canvas.getContext("2d");
             ctx.drawImage(img, this.x * this.squareSize, this.y * this.squareSize, this.squareSize, this.squareSize);
         };
-        img.src = "https://github.com/TrevorGarnett/snake_solver/blob/main/snake/apple.png?raw=true";
+        img.src = "https://raw.githubusercontent.com/TrevorGarnett/snake_solver/main/src/snake/apple.png";
     }
 
 }
