@@ -22,6 +22,48 @@ export default class Snake {
         window.requestAnimationFrame(this.step);
     }
 
+    // Function to get the game state, as a 2D array
+    getState() {
+
+        // Initialize the state array with zeros
+        let state = Array.from({ length: this.h }, () => Array.from({ length: this.w }, () => 0));
+
+
+        // Set '1' for snake head
+        let [headX, headY] = this.body[this.body.length - 1];
+        state[headY][headX] = 1;
+
+        // Set '2' for snake body segments
+        for (let i = 1; i < this.body.length - 1; i++) {
+            const [x, y] = this.body[i];
+            state[y][x] = 2;
+        }
+
+        // Set '3' for tail
+        let [tailX, tailY] = this.body[0];
+        state[tailY][tailX] = 3;
+
+        // Set '4' for apple
+        let [appleX, appleY] = this.apple.pos;
+        state[appleY][appleX] = 4;
+
+        return state;
+    }
+
+    printState() {
+        let currState = this.getState();
+
+        console.log("======================");
+
+        for (let i = 0; i < currState.length; i++) {
+            let string = ''
+            for (let j = 0; j < currState[i].length; j++) {
+                string += currState[i][j].toString() + ' ';
+            }
+            console.log(string + '\n');
+        }
+    }
+
     step = (timeStep) => {
         if (this.started) {
             if (this.start === undefined) {
@@ -30,6 +72,7 @@ export default class Snake {
             }
             const elapsed = timeStep - this.start;
             if (Math.floor(elapsed / this.frequency) > this.current) {
+                this.printState();
                 this.current = Math.floor(elapsed / this.frequency);
                 if (this.numMoves >= 1) {
                     this.officialDir = this.moves[this.move];
@@ -198,7 +241,7 @@ export default class Snake {
         let ctx = this.canvas.getContext("2d");
         let x = this.body[0][0] * this.squareSize;
         let y = this.body[0][1] * this.squareSize;
-        
+
         ctx.fillStyle = "#3BB143";
         ctx.fillRect(x, y + e, 2 * this.squareSize, this.squareSize - 2 * e);
 
@@ -244,18 +287,18 @@ export default class Snake {
 
             // Snake's left eye
             ctx.fillRect(eyeX + d - this.squareSize * 2, headY + 0.2 * this.squareSize, eyeSize, eyeSize);
-    
+
             // Snake's right eye
             ctx.fillRect(eyeX + d - this.squareSize * 2, headY + 0.6 * this.squareSize, eyeSize, eyeSize);
-    
+
             // Render the Snake's pupils
             let pupilSize = 0.1 * this.squareSize;
             ctx.fillStyle = "Black";
-    
+
             // Snake's left pupil
             let pupilX = eyeX + 0.1 * this.squareSize + d;
             ctx.fillRect(pupilX - this.squareSize * 2, headY + 0.25 * this.squareSize, pupilSize, pupilSize);
-    
+
             // Snake's right pupil
             ctx.fillRect(pupilX - this.squareSize * 2, headY + 0.65 * this.squareSize, pupilSize, pupilSize);
         }
@@ -289,7 +332,7 @@ export default class Snake {
             // Snake's right pupil
             ctx.fillRect(pupilX - d, headY + 0.65 * this.squareSize, pupilSize, pupilSize);
         }
-        
+
         // Snake moving down
         else if (dir === "down") {
             // Render the Snake's eyes
@@ -314,10 +357,10 @@ export default class Snake {
 
             // Snake's left pupil
             let pupilY = eyeY + 0.1 * this.squareSize;
-            ctx.fillRect(headX +  0.25 * this.squareSize, pupilY + d - this.squareSize, pupilSize, pupilSize);
+            ctx.fillRect(headX + 0.25 * this.squareSize, pupilY + d - this.squareSize, pupilSize, pupilSize);
 
             // Snake's right pupil
-            ctx.fillRect(headX +  0.65 * this.squareSize, pupilY + d - this.squareSize, pupilSize, pupilSize);
+            ctx.fillRect(headX + 0.65 * this.squareSize, pupilY + d - this.squareSize, pupilSize, pupilSize);
         }
         // Snake moving up
         else if (dir === "up") {
@@ -342,10 +385,10 @@ export default class Snake {
 
             // Snake's left pupil
             let pupilY = eyeY;
-            ctx.fillRect(headX +  0.25 * this.squareSize, pupilY - d, pupilSize, pupilSize);
+            ctx.fillRect(headX + 0.25 * this.squareSize, pupilY - d, pupilSize, pupilSize);
 
             // Snake's right pupil
-            ctx.fillRect(headX +  0.65 * this.squareSize, pupilY - d, pupilSize, pupilSize);
+            ctx.fillRect(headX + 0.65 * this.squareSize, pupilY - d, pupilSize, pupilSize);
         }
     }
 }
